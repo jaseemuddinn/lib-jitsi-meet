@@ -1,7 +1,7 @@
-
 import JitsiTrackError from '../../JitsiTrackError';
 import * as JitsiTrackErrors from '../../JitsiTrackErrors';
 import browser from '../browser';
+import config from '../../config';
 
 const logger = require('@jitsi/logger').getLogger(__filename);
 
@@ -47,7 +47,9 @@ const ScreenObtainer = {
      */
     _createObtainStreamMethod() {
         if (browser.isElectron()) {
-            return this.obtainScreenOnElectron;
+            return config.useGetDisplayMediaForScreenCapture
+                ? this.obtainScreenFromGetDisplayMedia
+                : this.obtainScreenOnElectron;
         } else if (browser.isReactNative() && browser.supportsGetDisplayMedia()) {
             return this.obtainScreenFromGetDisplayMediaRN;
         } else if (browser.supportsGetDisplayMedia()) {
